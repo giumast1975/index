@@ -1,0 +1,394 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Lenti Progressive – Guida Facile</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+    .fadeOut{opacity:0;transform:scale(.95);transition:opacity .18s,transform .18s}
+    .fadeIn{opacity:1;transform:scale(1);transition:opacity .18s,transform .18s}
+  </style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+
+const TOPICS=[
+ {id:'base',title:'Ottica Base: Il Problema',emoji:'👁️',color:'#2563eb',light:'#dbeafe',args:[
+  {l:'Cos\'è la miopia?',cards:[
+   {f:'Ho difficoltà a vedere lontano: di che cosa si tratta?',b:'Miopia: l\'occhio mette a fuoco davanti alla retina, non dietro. Vedi bene da vicino (lettura, telefono), ma lontano è sfuocato (cartelli stradali, film al cinema). Si corregge con lenti concave.'},
+   {f:'Come riconosco se sono miope?',b:'Strizza gli occhi per vedere da lontano. Vedi perfettamente da vicino senza sforzo. Fatica a leggere i cartelli stradali in auto. Spesso inizia nell\'infanzia e peggiora fino ai 20-25 anni.'},
+   {f:'La miopia è ereditaria?',b:'Sì, almeno in parte. Se uno o entrambi i genitori sono miopi, il rischio aumenta. Fattore genetico + abitudini (molto tempo al pc/smartphone). Non è una malattia, solo una forma diversa dell\'occhio.'},
+   {f:'Si può prevenire la miopia?',b:'Prevenzione: stare all\'aperto (luce naturale), fare pause dal pc/telefono ogni 20 minuti, distanza di lettura corretta (30-40 cm). L\'occhio miope è comunque destinato a stare miope, ma la prevenzione rallenta la progressione.'},
+  ]},
+  {l:'Ipermetropia: l\'altro lato',cards:[
+   {f:'Ho difficoltà a vedere da vicino: di che cosa si tratta?',b:'Ipermetropia: l\'occhio mette a fuoco dietro la retina, non davanti. Vedi meglio da lontano, ma da vicino è difficile mettere a fuoco (lettura, cucito, dettagli). Si corregge con lenti convesse.'},
+   {f:'Come riconosco se sono ipermetrope?',b:'Affaticamento agli occhi quando leggi. Mal di testa dopo lettura prolungata. Migliora se allontani il libro. Difficoltà con smartphone e piccoli dettagli. Spesso scoperto tardi: l\'occhio compensa con uno sforzo muscolare.'},
+   {f:'Ipermetropia è grave?',b:'No, è una variante naturale. Molte persone non se ne accorgono finché sono giovani (gli occhi compensano). Diventa manifesta verso i 40-45 anni, quando il cristallino invecchia e non riesce più a compensare.'},
+  ]},
+  {l:'La presbiopia: l\'invecchiamento naturale',cards:[
+   {f:'A un certo punto non riesco più a mettere a fuoco da vicino: perché?',b:'Presbiopia: attorno ai 40-45 anni il cristallino perde elasticità. Non riesce più a cambiare forma per mettere a fuoco da vicino. È naturale, accade a tutti. Non è una malattia, è invecchiamento dell\'occhio.'},
+   {f:'Come cambia la presbiopia con l\'età?',b:'Parte da 40-45 anni (presbiopia iniziale, +0.75 D). Peggiora fino ai 60-65 anni, poi stabilizza. A 60 anni arriva a +3.00 D. Da 65 anni in poi rimane stabile. Ogni 5 anni peggior di circa +0.50 D.'},
+   {f:'Cosa sento quando divento presbite?',b:'Allontani il libro per leggere ("braccia corte"). Difficoltà nel cambio lontano-vicino. Affaticamento dopo lettura. Fatica a leggere il menù al ristorante. Migliora se aumenti l\'illuminazione. È il primo segno dell\'invecchiamento dell\'occhio.'},
+   {f:'La presbiopia colpisce tutti allo stesso modo?',b:'No. Chi è miope si accorge meno (allontana il libro e vede). Chi è ipermetrope soffre di più (già faticava da vicino). Chi è astiga deve compensare anche su astigmatismo. Chi non ha difetti: scopre la presbiopia pura.'},
+  ]},
+ ]},
+
+ {id:'progressiva',title:'La Lente Progressiva: La Soluzione',emoji:'✨',color:'#059669',light:'#d1fae5',args:[
+  {l:'Cos\'è una lente progressiva?',cards:[
+   {f:'Come funziona una lente progressiva?',b:'Una sola lente con TRE poteri diversi integrati: lontano (in alto), intermedio (al centro), vicino (in basso). Non linea visibile. Man mano che guardi in basso aumenta il potere per il vicino. È come avere 3 occhiali in uno.'},
+   {f:'Qual è la differenza con gli occhiali bifocali o trifocali?',b:'Bifocali/trifocali: hanno linee visibili orizzontali che dividono le zone. Progressivi: cambio FLUIDO e graduale senza linee. Estetica migliore, visione più naturale, cambio lontano-vicino è morbido e imperceettibile.'},
+   {f:'Perché si chiama "progressiva"?',b:'"Progressiva" = cambio graduale. La potenza aumenta gradualmente dall\'alto (lontano) al basso (vicino). Non è un salto brusco, ma una progressione continua. Come una rampa, non scale.'},
+   {f:'Chi ha bisogno di una progressiva?',b:'Chi ha presbiopia OLTRE a un altro difetto (miopia, ipermetropia, astigmatismo). Esempio: chi è miope e a 45 anni inizia a non leggere. O ipermetrope che già faticava. Anche chi non ha altri difetti può usarla (presbiopia pura).'},
+   {f:'Quando conviene iniziare con una progressiva?',b:'Quando leggi con difficoltà e con la distanza sbagliata. Quando cambio veloce lontano-vicino (lavoro al pc, poi guardi clienti). Prima inizi, meglio ti adatti (cervello e muscoli oculari si adeguano più velocemente con l\'età giovane).'},
+   {f:'È vero che le progressive fanno male agli occhi?',b:'No. Alcuni dicono "mi girano le stanze", ma è il cervello che si adatta a una nuova geometria. I primi 2-3 giorni senti differenza, poi è naturale. Il male alle stanze sparisce entro una settimana in genere.'},
+   {f:'Qual è la qualità delle lenti progressive?',b:'Entry (base): corridoio visivo stretto, adattamento 5-7 giorni. Mid (media): corridoio più ampio, adattamento 2-3 giorni. Premium: massima libertà visiva, adattamento quasi immediato. Prezzo sale, ma comfort aumenta molto.'},
+  ]},
+  {l:'I tre campi visivi della progressiva',cards:[
+   {f:'Dove guardo per vedere lontano?',b:'In alto. Quando guardi dritto o in su, usi la zona superiore della lente (potere per lontano). Esempio: guidare, guardare film, persone a distanza. È la zona più ampia della lente.'},
+   {f:'Dove guardo per la distanza intermedia?',b:'Al centro. Quando abbassi lo sguardo leggermente (30-40 cm), usi il centro della lente. Esempio: pc, specchio, quadro sul muro, dashboard dell\'auto. È la zona "comfort" dove passi più tempo.'},
+   {f:'Dove guardo per il vicino (lettura)?',b:'In basso. Quando abbassi gli occhi (20-30 cm), usi la zona inferiore della lente con massima potenza per il vicino. Esempio: leggere, cucito, cellulare, menù al ristorante. Zona più stretta ma con potenza massima.'},
+   {f:'Cosa succede se muovo gli occhi lateralmente?',b:'Sugli angoli percepisci distorsioni (è normale). Per questo devi muovere la TESTA, non gli occhi. Questo all\'inizio è il vero "adattamento", non il cambio di potenza. La testa segue lo sguardo naturalmente.'},
+   {f:'E se devo guardare dietro di me in auto?',b:'Giri la testa. Allo stesso modo: non solo gli occhi, ma l\'intera testa. È come tornare a come guardavi prima dei 40 anni. Sembra sconveniente, ma diventa naturale in pochi giorni.'},
+  ]},
+  {l:'Vantaggi concreti della progressiva',cards:[
+   {f:'Qual è il vantaggio numero 1 della progressiva?',b:'UN SOLO OCCHIALE. Non porti due paia (vista + lettura). Non rischi di dimenticare gli occhiali da lettura a casa. Semplicità di vita: entri da qualsiasi parte con un solo paio.'},
+   {f:'Estetica: la linea bifocale sparisce?',b:'Sì. Le bifocali hanno una linea orizzontale visibile che fa sembrare l\'occhio "diviso". Le progressive non hanno linea: gli altri non vedono che sei ipermetrope o presbite. Occhio più naturale e giovanile.'},
+   {f:'Visione più naturale?',b:'Sì. Cambi lontano-vicino fluido, senza salti. Il tuo cervello nota meno il cambio (si adatta gradualmente). Bifocali/trifocali: salto evidente, fastidio, sensazione "artificiale".'},
+   {f:'Meno stanchezza?',b:'Sì, dopo adattamento. Occhio lavora meno sforzo poiché la transizione è graduale. Bifocali: sforzo concentrato su due zone solo. Progressiva: distribuito su tutta la lente.'},
+   {f:'Libertà di movimento?',b:'Sì. Non sei "legato" a una sola distanza. Nella stessa lente vedi tutto: dalla segnaletica in auto al viso del passeggero al cruscotto. Non devi togliere/rimettere gli occhiali come con le bifocali.'},
+   {f:'Vale il prezzo più alto della progressiva?',b:'Sì, se usi l\'occhiale tutto il giorno. Investimento sulla qualità di vita: comodità, estetica, libertà visiva. Se lo usi occasionalmente, forse la bifocale conviene. Ma per uso continuativo, conveniene sempre.'},
+  ]},
+ ]},
+
+ {id:'misurazione',title:'Misurazioni e Personalizzazione',emoji:'📏',color:'#d97706',light:'#fef3c7',args:[
+  {l:'Misurazioni fondamentali',cards:[
+   {f:'Quali sono i dati che servono per ordinare una progressiva?',b:'3 dati essenziali: 1) Prescrizione per il lontano (sfera, cilindro, asse), 2) Addizione per il vicino (+0.75 a +3.25 D), 3) Distanza interpupillare (DIP): distanza tra i centri delle pupille. Senza questi non si ordina.'},
+   {f:'Che cos\'è l\'addizione?',b:'Differenza tra potenza per il lontano e potenza per il vicino. Esempio: lontano +3.00, addizione +1.50 = vicino +4.50. Determina quanto "salto" c\'è tra lontano e vicino. Aumenta con l\'età (più presbiopia = addizione maggiore).'},
+   {f:'Che cosa è la distanza interpupillare (DIP)?',b:'Distanza tra i centri delle pupille (in mm). Normale: 54-74 mm. È cruciale: se sbagliata, lente è decentrata, il potere si posiziona male. Bisogna misurarla separatamente per destra e sinistra (non è simmetrica).'},
+   {f:'Dove mettere il punto di vista della lente?',b:'Altezza di centratura (FH): distanza tra il bordo superiore della montatura e il punto di vista. Minimo 14 mm (perché? zona vicino sia ampia). Ogni mm di differenza cambia la posizione della zona di lettura di 1 mm. Cruciale per comodità.'},
+   {f:'Che cosa è la distanza apice corneale?',b:'Distanza tra la punta della cornea e la lente (circa 12 mm normalmente). Se cambia, cambia il potere percepito dal cliente. Con distanze diverse (occhiali sportivi lontani dal viso) la lente deve essere ricalcolata.'},
+  ]},
+  {l:'Centramento personalizzato',cards:[
+   {f:'Che cosa significa "centramento personalizzato"?',b:'Non tutte le persone hanno la stessa anatomia. Opzione FIT: misura l\'inclinazione (pantoscopica e di avvolgimento) individuale. Eyecode: posiziona il centro di rotazione dell\'occhio. Risultato: lente su misura, non "taglia unica".'},
+   {f:'Perché il centramento personalizzato è importante?',b:'Se non centrato bene: zone visive non al posto giusto, distorsioni, presbiopia percepita male. Centramento corretto: massima libertà visiva, minima distorsione, visione naturale. Differenza notevole tra lente standard e personalizzata.'},
+   {f:'Come si misura il centramento correttamente?',b:'Usando strumenti digitali: Eye-Ruler 2 o Visioffice (telecamera con software). Danno: DIP monoculare dx/sx, altezza di centratura dx/sx, inclinazione montatura, distanza apice corneale. Più preciso di misure manuali.'},
+   {f:'Se la montatura cambierà posizione sul viso?',b:'La posizione della montatura cambia se perdi/guadagni peso (viso cambia), se la regoli male, se la indossi diversamente. Per questo è importante il centramento iniziale corretto. Se cambia troppo, la lente perde efficacia.'},
+  ]},
+  {l:'Controllo di qualità della lente',cards:[
+   {f:'Come si verifica che la lente ordinata sia giusta?',b:'Con il frontifocometro (strumento ottico): si misura il potere della lente finita. Si controlla: potere per il lontano, potere per il vicino, cilindro e asse. Deve corrispondere alla prescrizione (tolleranze ISO standard, ±0.25 D).'},
+   {f:'Perché il frontifocometro misura potenze diverse dalla prescrizione?',b:'Prescrizione: condizioni ideali di laboratorio. Frontifocometro: condizioni reali indosso (inclinazione pantoscopica, distanza apice corneale, angolo di avvolgimento). Per questo la lente è "ricalcolata" per il portatore: garantisce il potere giusto nelle condizioni di indosso.'},
+   {f:'Si può fidarsi del frontifocometro?',b:'Il frontifocometro è preciso, ma misura in condizioni artifiali (lente perpendicolare). Il portatore la indossa inclinata (8-12°). Quindi non misura il potere "reale" percepito. È uno strumento di controllo, non di validazione fisiologica.'},
+   {f:'Cosa significa "tolleranze ISO"?',b:'Standard internazionale: ogni lente prodotta ha una tolleranza accettabile (solitamente ±0.25 D per il potere sferico). Purché rientri, la lente è corretta. Oltre: lente difettosa, va rifatta. È lo standard di qualità globale.'},
+  ]},
+ ]},
+
+ {id:'benefici',title:'Benefici e Adattamento',emoji:'🎯',color:'#7c3aed',light:'#f3e8ff',args:[
+  {l:'Benefici per la visione quotidiana',cards:[
+   {f:'Come cambia il mio modo di lavorare al pc con una progressiva?',b:'Lavori tutto il giorno senza togliere/rimettere occhiali. Guardi lo schermo (distanza intermedia), poi il cliente (lontano), poi documenti (vicino): tutto fluido. Niente interruzioni. Meno stanchezza perché cambio visivo è graduale.'},
+   {f:'Guida in auto: cosa cambierà?',b:'Vedi il cruscotto (intermedio) senza muovere gli occhiali. Poi la strada (lontano). Poi lo specchietto laterale. Tutto senza togliere/rimettere. Più sicurezza: non perdi secondi preziosi in situazioni d\'emergenza. Visione coerente.'},
+   {f:'In casa: lettura e tv?',b:'Leggi comodamente da qualsiasi distanza. Guardi la tv e poi il cellulare: niente salti. Ceni al ristorante leggendo il menù senza tirare gli occhiali. Cucini e vedi il ricettario da qualsiasi angolazione. Libertà completa.'},
+   {f:'Nel tempo libero: hobby e sport?',b:'Se fai hobby a distanze varie (pittura, lettura, giardinaggio), la progressiva è perfetta. No per sport ad alta velocità (corsa, ciclismo, equitazione): meglio sportivi specifici. Ma per attività normali: ideale.'},
+   {f:'Socialmente: come sembrerai?',b:'Niente linea bifocale visibile. Gli altri non vedranno che indossi occhiali per la presbiopia. Sembrerai più giovane (esteticamente). Confidente nel tuo sguardo. Niente disagio sociale che viene dalla bifocale.'},
+  ]},
+  {l:'Adattamento: primi giorni',cards:[
+   {f:'Quanto tempo ci vuole ad adattarsi?',b:'Entry: 5-7 giorni (20-30% non si adatta). Mid: 2-4 giorni (90% si adatta). Premium: 1-2 giorni (98% si adatta). Dipende da qualità lente e come la usi. Se la usi tutto il giorno, l\'adattamento è più veloce.'},
+   {f:'Che sensazioni avrò nei primi giorni?',b:'"Girano le stanze" se muovo solo gli occhi senza muovere la testa. Distorsione sui lati (effetto "grandangolo"). Non è male agli occhi, è il cervello che riconosce una nuova geometria. Sparisce da solo.'},
+   {f:'Cosa devo fare per adattarmi velocemente?',b:'Indossala tutto il giorno (importante!). Muovi la testa, non solo gli occhi. Evita di "stressare" la lente con movimenti bruschi. Fai attività normali (il cervello si adatta meglio con uso reale che stando fermo). Dopo 3-4 giorni, diventa naturale.'},
+   {f:'Posso portarla solo per leggere i primi giorni?',b:'Sconsigliato. Il cervello non si adatta bene se la usi saltuariamente. È come imparare a guidare: non capisci il sistema se lo usi 2 ore. Meglio indossarla sempre, anche se fastidiosa inizialmente.'},
+   {f:'Se dopo una settimana ancora non mi trovo?',b:'Raro (5-10% dei casi). Potrebbe essere: montatura male centrata, lente di qualità inferiore, tuo occhio molto sensibile. Torna dal tuo ottico: può regolare la montatura, suggerire una qualità superiore, o proporre una diversa geometria di lente.'},
+   {f:'La progressiva continuerà a migliorare con il tempo?',b:'Sì. Dopo primo mese, diventa ancora migliore. Cervello e occhio si adattano sempre più. Dopo 3-6 mesi, la usi in automatico senza pensarci. Come cambiare auto: strani i primi giorni, normali dopo.'},
+  ]},
+  {l:'Quando serve cambiarla',cards:[
+   {f:'Ogni quanto tempo devo cambiare la prescrizione progressiva?',b:'Dipende da quanto cambia la tua vista. In genere: 1-2 anni mentre la presbiopia peggiora (fino ai 55-60 anni). Dopo 60 anni, presbiopia è stabile: puoi tenerla 2-3 anni. Dipende da te: se vedi male, cambia.'},
+   {f:'Come faccio a sapere che la prescrizione è cambiata?',b:'Segnali: difficoltà a leggere (anche vicino), fatica al pc (intermedio), visione lontano meno nitida. Se noti uno di questi, fatti controllare. Una visita optometrica verifica se è cambiata e di quanto.'},
+   {f:'Se cambio montatura, la lente va ricalcolata?',b:'Sì, se la nuova montatura ha misurazioni diverse (altezza, inclinazione, forma). Stesso potere, ma lente diversa perché geometria diversa. Per questo è importante mantenere la stessa altezza di centratura se possibile.'},
+  ]},
+ ]},
+
+ {id:'trattamenti',title:'Trattamenti Aggiuntivi',emoji:'🛡️',color:'#dc2626',light:'#fee2e2',args:[
+  {l:'Antiriflesso: protezione della lente',cards:[
+   {f:'Che cosa fa il trattamento Antiriflesso?',b:'Protegge la lente da: riflessi (visione più chiara), graffi (durata più lunga), macchie (acqua e sporco scivola via), polvere (si pulisce facilmente). Rende la lente quasi invisibile: migliore estetica e migliore funzionalità.'},
+   {f:'Quanto dura il Antiriflesso?',b:'Dipende dalla qualità: base (1-2 anni), premium (3-4 anni). Poi si consuma e bisogna rifare. Non è permanente. Merita? Sì: riduce fastidi quotidiani (riflessi, pulizia) e protegge l\'investimento della lente.'},
+   {f:'Antiriflesso è obbligatorio con la progressiva?',b:'No, ma consigliato. Progressiva è investimento. Antiriflesso protegge l\'investimento. Senza: riflessi fastidiosi, graffi rovinano la visione nel tempo. Con: massima qualità visiva e durata. Costa poco relativamente.'},
+  ]},
+  {l:'Transitions: lente fotocromatica',cards:[
+   {f:'Che cosa sono le lenti Transitions?',b:'Lenti che si scuriscono al sole e schiariscono al chiuso, automaticamente. Protezione UV garantita (100%). Pratico: un solo occhiale per dentro e fuori. Niente rischio di dimenticare gli occhiali da sole.'},
+   {f:'Quanto si scuriscono e come funzionano?',b:'Contengono molecole sensibili ai raggi UV. Ai raggi UV scuriscono in 30-60 secondi. Al chiuso schiariscono in 2-5 minuti. Protezione è istantanea. Più il sole è forte, più si scuriscono. Pratiche in qualsiasi clima.'},
+   {f:'Transitions e progressiva: combinazione perfetta?',b:'Sì. Un solo occhiale per tutte le situazioni: dentro leggi con nitidezza, fuori è già da sole. Niente cambio occhiali. Praticità massima + protezione UV. Consigliato se stai spesso all\'aperto e dentro.'},
+   {f:'Transitions costano molto?',b:'Costano più di una lente chiara normale, ma meno di comprare occhiali separati (vista + sole). Se usi spesso il sole, paghi una sola volta e risolvi tutto. Investimento conveniente.'},
+   {f:'Tutti i Transitions sono uguali?',b:'No. Standard: moderata scurimento. XTRActive: scurimento più marcato, funziona anche in auto. Drivewear: specifico per la guida (polarizzato + fotocromatico). Scegli in base alle tue abitudini.'},
+  ]},
+  {l:'Luce blu: protezione blu-viola',cards:[
+   {f:'Che cosa è Luce Blu?',b:'Filtro integrato nella lente contro i raggi UV e la luce blu-viola (400-455 nm). Protegge la retina dai danni accumulativi dei raggi UV. Riduce affaticamento da schermo (luci LED, smartphone, pc).'},
+   {f:'Chi ha bisogno di Luce Blu?',b:'Se passi molte ore al pc, smartphone, led e stai all\'aperto (dose cumulativa UV). Vale per tutti, ma specialmente under 40 (accumulo lungo la vita). Investimento nella salute visiva futura.'},
+   {f:'Luce Blu è diverso dal blu filter?',b:'Sì. Luce blu: protegge dagli UV + parte della luce blu. Filtro blu: filtra solo luce blu da schermi. luce blu è più completo, protegge sia da sole che da schermi. Se stai spesso all\'aperto, preferisci luce blu.'},
+  ]},
+ ]},
+
+ {id:'varilux',title:'Varilux Immersia: Il Prodotto',emoji:'⭐',color:'#1e40af',light:'#eff6ff',args:[
+  {l:'Che cosa è Varilux Immersia',cards:[
+   {f:'Che cosa è Varilux Immersia?',b:'La lente progressiva premium di Essilor. È "ricalcolata" per ogni portatore in base al suo potere visivo e alla sua geometria personale. Non è una lente standard: ogni esemplare è unico, costruito su misura per quella persona specifica.'},
+   {f:'Qual è la differenza tra una progressiva standard e Varilux Immersia?',b:'Standard: stessa lente per tutti (taglia unica). Varilux Immersia: progettata individualmente sulla base del potere per lontano, addizione, DIP, altezza di centratura, inclinazione della montatura. Risultato: massima qualità visiva personalizzata.'},
+   {f:'In quali montature posso mettere Varilux Immersia?',b:'In qualsiasi montatura. La lente si adatta alla montatura, non il contrario. Però: la montatura deve avere almeno 14 mm di altezza di centratura (più alta = zona lettura più ampia). Con montature più basse, la zona di lettura è ridotta.'},
+   {f:'Qual è il range di potere disponibile per Varilux Immersia?',b:'Da -20 a +15 diottrie. Copre praticamente tutti i difetti visivi. Addizione da +0.75 a +3.50 (presbiopia da lieve a severa). Se il cliente ha un potere strano, Varilux Immersia probabilmente lo ha.'},
+  ]},
+  {l:'La gamma di prodotti Varilux',cards:[
+   {f:'Quali sono i materiali disponibili per Varilux Immersia?',b:'5 scelte: ORMA (1.5, standard), AIRWEAR (leggero, sicuro), ORMIX (versatile), STYLIS (premium, sottile), LINEIS (premium +). Scegli in base a: peso desiderato, budget, quanto sottile vuoi la lente.'},
+   {f:'Ogni materiale di Varilux può avere i trattamenti?',b:'Sì. Ogni materiale può essere ordinato: CLEAR (senza trattamenti), con EYE PROTECT SYSTEM (protezione UV + blu), con TRANSITIONS (fotocromatico), o combinazioni. Massima flessibilità nella proposta.'},
+   {f:'Quale materiale consigli a un primo cliente presbiope?',b:'AIRWEAR: leggero (importante perché la progressiva è già complessa), sicuro (resistente ai traumi), prezzo ragionevole. O ORMA standard se il budget è limitato. STYLIS/LINEIS se vuole la massima qualità.'},
+   {f:'Vale la pena il materiale STYLIS o LINEIS premium?',b:'Se il cliente passa 8+ ore con gli occhiali e vuole massima qualità: sì. Se lo usa occasionalmente: AIRWEAR basta. Premium è investimento per chi chiede il massimo dalla visione.'},
+  ]},
+  {l:'Misurazioni e ordine',cards:[
+   {f:'Quali sono i dati OBBLIGATORI per ordinare Varilux Immersia?',b:'3 dati essenziali: 1) Prescrizione per il lontano (sfera, cilindro, asse), 2) Addizione per il vicino (quanto costa legare da vicino), 3) Distanza interpupillare (DIP): distanza tra i centri delle pupille. Senza questi 3 non si ordina.'},
+   {f:'Perché la distanza interpupillare monoculare è importante?',b:'Perché i due occhi non sono simmetrici. DIP destra ≠ DIP sinistra in molti casi. Se misuri solo DIP totale, le lenti finiscono decentralate. Risultato: visione storta. Per questo Varilux Immersia misura entrambe le lenti singolarmente.'},
+   {f:'Qual è l\'altezza minima di centratura per Varilux Immersia?',b:'Minimo 14 mm. Perché? Perché la zona di lettura (basso della lente) deve avere spazio sufficiente. Con montature più basse (tipo occhiali da sole o piccoli), la zona di lettura è ridotta e il cliente non vede bene da vicino.'},
+   {f:'Montature con altezze di centratura maggiori: che vantaggio hanno?',b:'Più altezza = più spazio in basso per la zona di lettura. Risultato: zona di lettura più ampia, più comoda, meno necessità di muovere la testa per leggere. Perfetto per chi legge molto.'},
+   {f:'Quali strumenti si usano per misurare con precisione?',b:'Strumenti digitali: Eye-Ruler 2 (misura manuale con telecamera), Visioffice (colonna di misura completa con software). Forniscono: DIP destra/sinistra, altezza centratura destra/sinistra, inclinazione, distanza apice corneale. Precisione assoluta.'},
+  ]},
+  {l:'Personalizzazione: FIT vs Eyecode',cards:[
+   {f:'Che cosa è l\'opzione FIT di Varilux Immersia?',b:'Misura la posizione 3D della lente sulla testa del cliente: distanza apice corneale (quanto lontano dalla cornea), inclinazione pantoscopica (quanto la lente è inclinata in avanti), angolo di avvolgimento (quanto la lente è avvolta attorno al viso). Risultato: lente adatta alla geometria personale.'},
+   {f:'Che cosa è la misurazione Eyecode?',b:'Individua il Centro di Rotazione dell\'Occhio (ERC) specifico del cliente: il punto attorno al quale l\'occhio ruota quando guarda. Ogni persona ha un ERC diverso. Eyecode posiziona la lente rispetto a questo punto. Massima personalizzazione ottica.'},
+   {f:'Quando conviene usare FIT invece di Eyecode?',b:'FIT: adeguato per la maggior parte (95% dei clienti). Eyecode: per clienti molto sensibili, che hanno problemi con progressive standard, o che richiedono massima precisione. Eyecode costa più di FIT.'},
+   {f:'Se non uso FIT o Eyecode, la lente non è buona?',b:'È buona comunque. FIT e Eyecode sono "extra" di personalizzazione. La lente base Varilux Immersia è già superiore. FIT/Eyecode aggiungono il 5-10% di miglioramento per clienti che chiedono il massimo.'},
+  ]},
+  {l:'Controllo e verifica della qualità',cards:[
+   {f:'Perché la prescrizione e il frontifocometro mostrano valori diversi?',b:'Prescrizione: test fatto in condizioni ideali di laboratorio, lente in posizione retta. Frontifocometro: misura la lente finita, che è inclinata sulla testa del cliente. La lente è "ricalcolata" per funzionare bene inclinata. Così il potere reale percepito è giusto.'},
+   {f:'Come controllo se la lente ordinata è corretta?',b:'3 step: 1) Verificare prima riga etichetta = prescrizione originale del cliente. 2) Misurare con frontifocometro il potere vicino della lente finita. 3) Comparare con seconda riga etichetta (riferimento). Deve corrispondere (tolleranza ISO ±0.25 D).'},
+   {f:'Che cosa sono le "tolleranze ISO"?',b:'Standard internazionale di qualità. Ogni lente può avere una deviazione di ±0.25 D dalla prescrizione. Se entro questo range, è corretta. Se esce, la lente è difettosa e va rifatta. È lo standard mondiale.'},
+   {f:'Il frontifocometro misura il potere che il cliente percepisce?',b:'No. Misura in condizioni artificiali (lente perpendicolare, raggi paralleli). Il cliente la indossa inclinata. Per questo una lente "ricalcolata" come Varilux Immersia garantisce il potere giusto nelle condizioni REALI di indosso, non solo in laboratorio.'},
+   {f:'Dove si trova la zona di lettura sulla lente finita?',b:'8 mm sotto la linea dei microcerchi (piccoli segni sulla lente), decentrata nasalmente (verso il naso). Per lenti personalizzate con FIT o Eyecode, la posizione può variare: tracciature flessibili indicheranno quella corretta.'},
+  ]},
+  {l:'Identificare il cliente giusto',cards:[
+   {f:'Quali sono le caratteristiche del cliente perfetto per una progressiva?',b:'Over 38 anni. Ha già iniziato la presbiopia (difficoltà da vicino). Usa gli occhiali tutto il giorno o più volte al giorno. Lavora al pc o ha stile di vita dinamico (frequenta posti diversi). Il "presbite dinamico": chi cambia continuamente distanza di visione.'},
+   {f:'Come riconosco se il cliente è pronto per la progressiva?',b:'Domande: "Quando indossa gli occhiali?" "Per quanto tempo?" "Fai spesso il cambio da vicino a lontano?" "Hai spesso mal di testa?" Se alterna tra lontano-intermedio-vicino, è il candidato perfetto per la progressiva.'},
+   {f:'Esiste un cliente che NON dovrebbe avere la progressiva?',b:'Sì. Chi indossa occhiali solo per situazioni specifiche (lettura oppure guida, non entrambe). Chi non vuole adattarsi ai primi giorni. Chi ha budget molto limitato. Chi è estremamente sensibile ai cambiamenti. Alternativa: bifocali o due paia diversi.'},
+   {f:'Che differenza c\'è tra un già portatore e un nuovo portatore?',b:'Già portatore: sai cosa ha, conosci la sua soddisfazione. Se era bifocale, puoi mostrargli la progressiva come "upgrade". Nuovo portatore: non conosce il problema presbiopia. Devi spiegare il problema prima della soluzione.'},
+   {f:'Cosa devo chiedere a un già portatore di bifocali?',b:'"Sei soddisfatto dei tuoi occhiali attuali?" Se no, "Cosa non ti piace?" (solito: linea visibile, cambio brusco, limitazioni visione). Poi: "Esiste una soluzione moderna che risolve questi problemi: la progressiva".'},
+  ]},
+  {l:'Come proporre il prodotto',cards:[
+   {f:'Qual è il primo passo nella proposta della progressiva?',b:'Spiegare il PROBLEMA, non il prodotto. "Da que età comincia la presbiopia?" "È naturale, accade a tutti." Poi il disagio: "Difficoltà a leggere, allunghi i bracci, mal di testa?" Una volta che ammette il problema, proponi la soluzione.'},
+   {f:'Come spiego i benefici senza annoiare?',b:'Non: specifiche tecniche (corridoio visivo, design ottico). Sì: situazioni concrete. "Con una progressiva: leggi il menù al ristorante SENZA togliere gli occhiali, guidi la macchina E vedi il cliente, lavori al pc E non affatichi gli occhi."'},
+   {f:'Devo dire i difetti della progressiva?',b:'Sì, sempre. Honesty vince. "I primi 2-3 giorni senti una leggera distorsione sui lati. Il cervello si adatta, poi sparisce." "Devi abituarti a muovere la testa, non solo gli occhi." Cliente apprezza l\'onestà, aumenta la fiducia.'},
+   {f:'Come affronto l\'obiezione "Quanto costa?"',b:'"Un investimento sulla tua qualità di vita. Usi l\'occhiale 16 ore al giorno per 2 anni. Costa pochi centesimi al giorno per non avere il disagio della presbiopia. È una soluzione definitiva, non un compromesso."'},
+   {f:'Come affronto "Ho paura di non adattarmi"?',b:'"Il 95% delle persone si adatta perfettamente. Se entro 30 giorni non sei soddisfatto, abbiamo il servizio soddisfatti o rimborsati: puoi cambiarla senza costi." Questa garanzia rimuove la paura.'},
+  ]},
+  {l:'Il ruolo della realtà aumentata',cards:[
+   {f:'Come uso la realtà aumentata per vendere la progressiva?',b:'Mostri gli EFFETTI REALI: quali zone della lente vedono nitido (zone colorate) e quali vedono male (grigio). Cliente vede visivamente come funziona la progressiva. Poi simuli il cambio di geometria (inclinazione della montatura) per dimostrare come cambiano i campi visivi.'},
+   {f:'Che cosa dimostra effettivamente la realtà aumentata?',b:'1) Dove si trovano le zone nitide (lontano, intermedio, vicino). 2) Dove trovare le distorsioni (angoli). 3) Come la geometria della montatura cambia i campi visivi. Non spiega a parole, MOSTRA visivamente. Cliente capisce subito.'},
+   {f:'Come trasformo la realtà aumentata in proposte di vendita?',b:'"Vedi la zona verde? È dove vedi bene da lontano. Vedi il blu? È dove leggi da vicino. Senza linea visibile. Con una bifocale, avrebbe due zone separate e una linea. Preferisci la linea o il cambio fluido?"'},
+  ]},
+  {l:'Chiusura e garanzie',cards:[
+   {f:'Qual è la chiusura della vendita di una progressiva?',b:'Non "comprare/non comprare". Offri una GARANZIA: "Se nei prossimi 30 giorni non sei soddisfatto, puoi cambiarla o avere il rimborso totale. Zero rischi." Questa garanzia rimuove l\'ultima obiezione e chiude la vendita.'},
+   {f:'Cosa significa "servizio soddisfatti o rimborsati"?',b:'Il cliente prova la progressiva con FIDUCIA. Se davvero non si adatta (raro, 5%), non è stato costretto a tenere un prodotto sbagliato. Tu, ottico, garantisci la qualità con la tua fiducia. Aumenta vendite a lungo termine.'},
+   {f:'Come faccio a rendere reale la garanzia al cliente?',b:'"Ti darò il modulo soddisfatti o rimborsati in busta. Se entro 30 giorni hai dubbi, mi contatti. Niente domande imbarazzanti, niente compromessi. È il nostro impegno verso di te."'},
+   {f:'Qual è il follow-up dopo la vendita?',b:'Contatto il cliente dopo 3-4 giorni: "Come stai trovando i tuoi nuovi occhiali?" Dimostra che non è solo una vendita, ma una relazione. Se ha dubbi, li affronti subito. Se è felice, ottieni un promotore per il passaparola.'},
+  ]},
+ ]},
+];
+
+function genPDF(){
+  const h=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>Lenti Progressive – Guida Facile</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial;color:#1a1a2e;padding:36px;font-size:13px}.hd{text-align:center;margin-bottom:32px;padding-bottom:18px;border-bottom:3px solid #2563eb}.hd h1{font-size:26px;color:#1a1a2e}.hd p{color:#666;margin-top:6px}.topic{margin-bottom:28px;page-break-inside:avoid}.th{color:white;padding:11px 18px;border-radius:8px 8px 0 0}.th h2{font-size:16px;font-weight:700}.tb{border:1px solid #ddd;border-top:none;border-radius:0 0 8px 8px;padding:14px 18px}.st{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:12px 0 7px 0}.st:first-child{margin-top:0}ul{padding-left:16px}li{line-height:1.75;color:#333}.ft{text-align:center;margin-top:28px;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:14px}@media print{body{padding:20px}}</style></head><body>
+  <div class="hd"><h1>👁️ Lenti Progressive</h1><p>Guida Facile – Flashcard</p></div>
+  ${TOPICS.map(t=>`<div class="topic"><div class="th" style="background:${t.color}"><h2>${t.emoji} ${t.title}</h2></div><div class="tb"><div class="st" style="color:${t.color}">Argomenti</div><ul>${t.args.map(a=>`<li>${a.l} <em style="color:#888">(${a.cards.length} card)</em></li>`).join('')}</ul></div></div>`).join('')}
+  <div class="ft">Lenti Progressive – Materiale di Studio Facile</div>
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),400);
+}
+
+function App(){
+  const [view,setView]=useState('home');
+  const [cards,setCards]=useState([]);
+  const [lbl,setLbl]=useState('');
+  const [idx,setIdx]=useState(0);
+  const [phase,setPhase]=useState('question');
+  const [answers,setAnswers]=useState([]);
+  const [fading,setFading]=useState(false);
+
+  const start=(c,label)=>{
+    setCards(c);setLbl(label);setIdx(0);setPhase('question');setAnswers([]);setFading(false);setView('study');
+  };
+
+  const flip=()=>{
+    if(phase==='answer')return;
+    setFading(true);
+    setTimeout(()=>{setPhase('answer');setFading(false);},180);
+  };
+
+  const answer=knew=>{
+    const a=[...answers,knew];
+    setAnswers(a);
+    if(idx<cards.length-1){
+      setFading(true);
+      setTimeout(()=>{setIdx(i=>i+1);setPhase('question');setFading(false);},180);
+    }else{
+      setTimeout(()=>setView('results'),300);
+    }
+  };
+
+  const score=answers.filter(Boolean).length;
+  const pct=answers.length?Math.round(score/answers.length*100):0;
+  const wrong=cards.filter((_,i)=>!answers[i]);
+
+  if(view==='home')return(
+    <div className="min-h-screen pb-8" style={{background:'linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 50%,#cffafe 100%)'}}>
+      <div className="max-w-lg mx-auto px-4 pt-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-gray-900 text-2xl font-bold">Lenti Progressive</h1>
+            <p className="text-gray-500 text-xs">Guida Facile – Studio Veloce</p>
+          </div>
+          <button onClick={genPDF} className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-medium px-3 py-2 rounded-full border border-blue-300 transition-all">📄 PDF</button>
+        </div>
+
+        {TOPICS.map(topic=>(
+          <div key={topic.id} className="mb-5">
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <span className="text-lg">{topic.emoji}</span>
+              <h2 className="text-gray-800 font-semibold text-base">{topic.title}</h2>
+              <span className="text-gray-400 text-xs ml-auto">{topic.args.reduce((a,t)=>a+t.cards.length,0)} card</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {topic.args.map((arg,i)=>(
+                <button key={i} onClick={()=>start(arg.cards,arg.l)}
+                  className="bg-white rounded-xl px-4 py-3 text-left flex items-center justify-between hover:shadow-lg transition-all active:scale-98 border border-gray-200">
+                  <div>
+                    <div className="text-gray-800 font-medium text-sm">{arg.l}</div>
+                    <div className="text-xs mt-0.5" style={{color:topic.color}}>{arg.cards.length} flashcard</div>
+                  </div>
+                  <span className="text-gray-300 text-xl ml-3">›</span>
+                </button>
+              ))}
+              <button onClick={()=>start(topic.args.flatMap(t=>t.cards),topic.title+' – Tutto')}
+                className="rounded-xl px-4 py-3 text-left flex items-center justify-between border-2 transition-all"
+                style={{borderColor:topic.color,background:topic.light}}>
+                <span className="text-gray-800 text-sm font-medium">📖 Studia tutto {topic.emoji}</span>
+                <span className="text-gray-500 text-xs">{topic.args.reduce((a,t)=>a+t.cards.length,0)}</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if(view==='study'){
+    const card=cards[idx];
+    const pbar=((idx+1)/cards.length)*100;
+    const topic=TOPICS.find(t=>t.args.some(a=>a.l===lbl||lbl.includes(t.title)))||TOPICS[0];
+    return(
+      <div className="min-h-screen flex flex-col" style={{background:`linear-gradient(160deg,#f0f9ff 0%,${topic.light} 70%)`}}>
+        <div className="px-4 pt-6 pb-3 max-w-lg mx-auto w-full">
+          <div className="flex items-center justify-between mb-3">
+            <button onClick={()=>setView('home')} className="text-gray-600 hover:text-gray-800 text-sm transition-colors">← Home</button>
+            <span className="text-gray-500 text-xs">{idx+1} / {cards.length}</span>
+          </div>
+          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:topic.light}}>
+            <div className="h-full rounded-full transition-all duration-300" style={{width:`${pbar}%`,background:topic.color}}/>
+          </div>
+          <p className="text-gray-600 text-xs mt-2 truncate">{lbl}</p>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center px-4 pb-6 max-w-lg mx-auto w-full">
+          <div onClick={phase==='question'?flip:undefined}
+            className={`w-full rounded-3xl shadow-lg bg-white p-7 flex flex-col items-center justify-center text-center mb-5 ${phase==='question'?'cursor-pointer':''} ${fading?'fadeOut':'fadeIn'}`}
+            style={{minHeight:'240px',border:`2px solid ${topic.light}`}}>
+            {phase==='question'?(
+              <>
+                <div className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5" style={{background:topic.light,color:topic.color}}>Domanda</div>
+                <p className="text-gray-800 font-semibold text-lg leading-snug">{card?.f}</p>
+                <p className="text-gray-400 text-xs mt-6">Tocca per la risposta</p>
+              </>
+            ):(
+              <>
+                <div className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5 bg-green-50 text-green-700">Risposta</div>
+                <p className="text-gray-700 text-base leading-relaxed">{card?.b}</p>
+              </>
+            )}
+          </div>
+
+          {phase==='answer'&&(
+            <div className="w-full flex flex-col gap-3">
+              <button onClick={()=>answer(true)}
+                className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all active:scale-98"
+                style={{background:'#059669'}}>
+                ✓ L\'ho capito
+              </button>
+              <button onClick={()=>answer(false)}
+                className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all active:scale-98"
+                style={{background:'#dc2626'}}>
+                ✗ Ancora no
+              </button>
+            </div>
+          )}
+
+          {phase==='question'&&(
+            <button onClick={flip}
+              className="w-full py-4 rounded-2xl text-gray-700 font-semibold text-base border-2 transition-all"
+              style={{borderColor:topic.color,background:topic.light,color:topic.color}}>
+              Mostra risposta
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if(view==='results'){
+    const topic=TOPICS.find(t=>t.args.some(a=>a.l===lbl||lbl.includes(t.title)))||TOPICS[0];
+    const color=pct>=80?'#059669':pct>=60?'#d97706':'#dc2626';
+    const msg=pct===100?'Perfetto! Sei un esperto 🏆':pct>=80?'Bravissimo! 🎉':pct>=60?'Buon lavoro 💪':'Continua a studiare 📚';
+    return(
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{background:`linear-gradient(160deg,#f0f9ff 0%,${topic.light} 70%)`}}>
+        <div className="max-w-sm w-full">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-white shadow-xl mb-4 border-4" style={{borderColor:topic.color}}>
+              <div><div className="text-4xl font-bold" style={{color}}>{pct}%</div><div className="text-xs text-gray-400 mt-0.5">{score}/{cards.length}</div></div>
+            </div>
+            <h2 className="text-gray-800 text-2xl font-bold">{msg}</h2>
+          </div>
+          <div className="rounded-2xl px-5 py-4 mb-5" style={{background:topic.light,border:`2px solid ${topic.color}`}}>
+            <div className="flex justify-between mb-2">
+              <span className="text-gray-700 text-sm font-medium">✓ Capito</span>
+              <span className="font-semibold" style={{color:topic.color}}>{score}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-700 text-sm font-medium">✗ Ancora da ripassare</span>
+              <span className="font-semibold" style={{color:wrong.length>0?'#dc2626':'#059669'}}>{wrong.length}</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            {wrong.length>0&&(
+              <button onClick={()=>start(wrong,lbl+' – Ripassare')}
+                className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all"
+                style={{background:topic.color}}>
+                🔁 Ripassare le {wrong.length} difficili
+              </button>
+            )}
+            <button onClick={()=>start(cards,lbl)}
+              className="w-full py-4 rounded-2xl text-gray-700 font-semibold text-base border-2 transition-all"
+              style={{borderColor:topic.color,background:topic.light,color:topic.color}}>
+              ↺ Ricomincia da capo
+            </button>
+            <button onClick={()=>setView('home')}
+              className="w-full py-4 rounded-2xl text-gray-600 hover:text-gray-800 font-medium transition-all">
+              ← Torna a casa
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
+
